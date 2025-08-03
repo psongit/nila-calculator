@@ -24,17 +24,22 @@ function App() {
   const platformFeePercent = parseFloat(inputs.platformFeePercent) || 0;
   const markupPercent = parseFloat(inputs.markupPercent) || 0;
 
-  // Platform fee is a seller expense, not part of GST or selling price
-  const platformFee = (productionCost + shippingCharges) * platformFeePercent / 100;
-  // Selling price before GST (what customer pays before tax)
-  const sellingPriceBeforeGST = productionCost + shippingCharges + (productionCost + shippingCharges) * (markupPercent / 100);
-  // GST is on selling price before GST
-  const gst = sellingPriceBeforeGST * 0.05;
-  // Final selling price (customer pays this)
-  const sellingPrice = sellingPriceBeforeGST + gst;
   // Gross cost is all expenses (production + shipping)
   const grossCost = productionCost + shippingCharges;
-  // Profit is selling price minus all costs and platform fee
+
+  // Selling price before GST (what customer pays before tax)
+  const sellingPriceBeforeGST = grossCost + (grossCost * (markupPercent / 100));
+
+  // Platform fee is a percentage of selling price before GST
+  const platformFee = sellingPriceBeforeGST * (platformFeePercent / 100);
+
+  // GST is on selling price before GST
+  const gst = sellingPriceBeforeGST * 0.05;
+
+  // Final selling price (customer pays this)
+  const sellingPrice = sellingPriceBeforeGST + gst;
+
+  // Profit is selling price (with GST) minus gross cost and platform fee
   const profit = sellingPrice - grossCost - platformFee;
 
   const results = {
@@ -89,10 +94,13 @@ function App() {
           <h3 style={{gridColumn:'span 2'}}>Results</h3>
           <div>Production Cost:</div><div>₹{results.productionCost.toFixed(2)}</div>
           <div>Shipping Cost (Free to customer):</div><div>₹{results.shippingCharges.toFixed(2)}</div>
-          <div>Platform Fee:</div><div>₹{results.platformFee.toFixed(2)}</div>
+          <div>
+            Platform Fee on ₹{sellingPriceBeforeGST.toFixed(2)} ({platformFeePercent}%):
+          </div>
+          <div>₹{results.platformFee.toFixed(2)}</div>
           <div style={{gridColumn:'span 2'}}><hr /></div>
           <div>Gross Cost (All expenses):</div><div>₹{results.grossCost.toFixed(2)}</div>
-          <div>GST (5%):</div><div>₹{results.gst.toFixed(2)}</div>
+          <div>GST (5%) on ₹{sellingPriceBeforeGST.toFixed(2)}:</div><div>₹{results.gst.toFixed(2)}</div>
           <div style={{gridColumn:'span 2'}}><hr /></div>
           <div>Selling Price:</div><div>₹{results.sellingPrice.toFixed(2)}</div>
           <div style={{fontWeight:'bold'}}>Profit:</div><div style={{fontWeight:'bold'}}>₹{results.profit.toFixed(2)}</div>
