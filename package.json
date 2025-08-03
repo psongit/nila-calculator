@@ -1,5 +1,6 @@
 {
   "name": "calculator",
+  "homepage": "https://psongit.github.io/nila-calculator/",
   "version": "1.0.0",
   "private": true,
   "description": "SPA Selling Price Calculator for Boutique Shop",
